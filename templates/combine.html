@@ -161,76 +161,87 @@
                     });
                     const data = await response.json();
                     if (data.status === 'success') {
-                        combinedSchedules.push(...data.timetable);
+                        console.log(`Friend ID: ${friendId}, Timetable:`, data.timetable.schedule); // 터미널에 출력
+                        combinedSchedules.push(...data.timetable.schedule);
                     }
                 }
 
+                console.log('Combined Timetable:', combinedSchedules); // 터미널에 출력
+                console.log("renderCombinedSchedule 실행\n");
                 renderCombinedSchedule(combinedSchedules, friendIds);
+                console.log("renderCombinedSchedule 실행 완료\n");
             });
 
-            // 합쳐진 시간표 렌더링
-            function renderCombinedSchedule(schedules, friendIds) {
-                combinedScheduleContainer.innerHTML = '';
+        // 합쳐진 시간표 렌더링
+        function renderCombinedSchedule(schedules, friendIds) {
+            combinedScheduleContainer.innerHTML = '';
 
-                const title = document.createElement('h2');
-                title.textContent = `선택된 친구들: ${friendIds.join(', ')}`;
-                combinedScheduleContainer.appendChild(title);
+            const title = document.createElement('h2');
+            title.textContent = `선택된 친구들: ${friendIds.join(', ')}`;
+            combinedScheduleContainer.appendChild(title);
 
-                const timeSlots = Array.from({ length: 30 }, (_, i) => {
-                    const hours = 9 + Math.floor(i / 2); // 07:00부터 시작
-                    const minutes = i % 2 === 0 ? '00' : '30';
-                    return `${hours}:${minutes}`;
-                });
+            const timeSlots = Array.from({ length: 30 }, (_, i) => {
+                const hours = 9 + Math.floor(i / 2); // 09:00부터 시작
+                const minutes = i % 2 === 0 ? '00' : '30';
+                return `${hours}:${minutes}`;
+            });
 
-                const table = document.createElement('table');
-                const thead = document.createElement('thead');
-                const tbody = document.createElement('tbody');
+            const table = document.createElement('table');
+            const thead = document.createElement('thead');
+            const tbody = document.createElement('tbody');
 
-                // 테이블 헤더 생성
-                const headerRow = document.createElement('tr');
-                const timeHeader = document.createElement('th');
-                timeHeader.textContent = '시간';
-                headerRow.appendChild(timeHeader);
+            // 테이블 헤더 생성
+            const headerRow = document.createElement('tr');
+            const timeHeader = document.createElement('th');
+            timeHeader.textContent = '시간';
+            headerRow.appendChild(timeHeader);
 
-                ['월요일', '화요일', '수요일', '목요일', '금요일'].forEach(day => {
-                    const dayHeader = document.createElement('th');
-                    dayHeader.textContent = day;
-                    headerRow.appendChild(dayHeader);
-                });
+            ['월요일', '화요일', '수요일', '목요일', '금요일'].forEach(day => {
+                const dayHeader = document.createElement('th');
+                dayHeader.textContent = day;
+                headerRow.appendChild(dayHeader);
+            });
 
-                thead.appendChild(headerRow);
-                table.appendChild(thead);
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
 
-                // 시간표 내용 생성
-                timeSlots.forEach((slot, index) => {
-                    const row = document.createElement('tr');
-                    const timeCell = document.createElement('td');
-                    timeCell.textContent = slot;
-                    row.appendChild(timeCell);
+            // 시간표 내용 생성
+            timeSlots.forEach((slot, index) => {
+                const row = document.createElement('tr');
+                const timeCell = document.createElement('td');
+                timeCell.textContent = slot;
+                row.appendChild(timeCell);
 
-                    for (let day = 1; day <= 5; day++) {
-                        const cell = document.createElement('td');
-                        const entries = schedules.filter(schedule => {
-                            const startIndex = timeSlots.indexOf(schedule.time.split('-')[0]);
-                            const endIndex = timeSlots.indexOf(schedule.time.split('-')[1]);
-                            return day === schedule.day && index >= startIndex && index < endIndex;
-                        });
+                for (let day = 1; day <= 5; day++) {
+                    const cell = document.createElement('td');
 
-                        if (entries.length > 0) {
-                            const entry = entries[0];
-                            cell.textContent = `${entry.class_name} (${entry.location})`;
-                            cell.style.backgroundColor = '#d3d3d3'; // 배경색으로 블록 표시
-                        }
+                    const entries = schedules.filter(schedule => {
+                        // 데이터를 검증
+                        if (!schedule || !schedule.class_days || !Array.isArray(schedule.class_days)) return false;
 
-                        row.appendChild(cell);
+                        // 시작 시간, 종료 시간, 위치가 모두 존재하는지 확인
+                        if (!schedule.start_time || !schedule.end_time || !schedule.location) return false;
+
+                        const startIndex = timeSlots.indexOf(schedule.start_time);
+                        const endIndex = timeSlots.indexOf(schedule.end_time);
+                        return schedule.class_days.includes(day) && index >= startIndex && index < endIndex;
+                    });
+
+                    if (entries.length > 0) {
+                        cell.textContent = entries.map(entry => `${entry.class_name} (${entry.location})`).join(', ');
+                        cell.style.backgroundColor = '#d3d3d3'; // 블록 배경색
                     }
 
-                    tbody.appendChild(row);
-                });
+                    row.appendChild(cell);
+                }
 
-                table.appendChild(tbody);
-                combinedScheduleContainer.appendChild(table);
-            }
+                tbody.appendChild(row);
+            });
+
+            table.appendChild(tbody);
+            combinedScheduleContainer.appendChild(table);
+        }
+
         });
     </script>
 </body>
