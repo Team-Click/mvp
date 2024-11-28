@@ -1,0 +1,109 @@
+<!--start page-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>click</title>
+
+  <!-- integrated.css 링크 추가 -->
+  <link rel="stylesheet" href="/static/csss/integrated.css">
+
+  <!-- index.css 내용을 스타일 태그로 삽입 -->
+  <style>
+    * { background-color: white; }
+
+    html {
+      color: black;
+    }
+    
+    @font-face {
+      font-family: 'SMUSnowflake-Bold';
+      src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2409-2@1.0/SMUSnowflake-Bold.woff2') format('woff2');
+      font-weight: 700;
+      font-style: normal;
+    }
+
+    #projectName {
+      font-size: 60px;
+      color: #b93234;
+      font-family: 'SMUSnowflake-Bold';
+      margin-top: 120px;
+      text-align: center;
+      margin-bottom: 0;
+    }
+
+    #buttons {  
+      display: grid; 
+      place-items: center; 
+      margin-top: 70px;
+    }
+
+    .start {
+      font-family: 'SMUSnowflake-Bold', Arial, Helvetica, sans-serif;
+      font-size: 15px;
+      font-weight: 300;
+      width: 250px;
+      height: 45px;
+      border-radius: 10px;
+      border: 2px solid #b93234;
+      background-color: transparent;
+      margin: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .start:hover {
+      background-color: #b93234;
+      color: white;
+      cursor: pointer;
+    }
+
+    #subname {
+      color: #b93234; 
+      font-family: 'SMUSnowflake-Bold'; 
+      font-size: 30px; text-align: center; 
+      margin-top: 10px; 
+      margin-bottom: 50px;
+  }
+
+    @media screen and (max-width: 768px) {
+      #projectName {
+        margin-top: 30px;
+        margin-bottom: 0;
+      }
+
+      #subname {
+        font-size: 25px;
+      }
+
+      #buttons {  
+      display: grid; 
+      place-items: center; 
+      margin-top: 35px;
+    }
+    }
+  </style>
+</head>
+<body>
+  <h1 id="projectName">Our Time</h1>
+  <h2 id="subname">세종대학교 시간표 협업 사이트</h2>
+
+  <img src="asset/image/Logo_ver3.png" alt="세종대 마크" style="width: 230px; height: 200px; display: block; margin: 0 auto;">
+
+  <div id="buttons">
+    <a href="templates/Login.html">
+      <button type="button" name="logIn" class="start">로그인</button>
+    </a>
+    <br>
+    <a href="templates/SignUp.html">
+      <button type="button" name="signUp" class="start">회원 가입</button>
+    </a>
+    <br>
+    <a href="templates/main.html">
+      <button type="button" name="No_lonIn_start" class="start">로그인 없이 시작하기</button>
+    </a>
+  </div>
+
+  <footer style="text-align: center; margin-top: 100px;">&copy;Team Click</footer>
+</body>
+</html>

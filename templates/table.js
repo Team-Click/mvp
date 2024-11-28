@@ -22,7 +22,7 @@ class Timetable {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                this.renderTimetable(data.timetable);
+                this.renderTimetable(data.timetable.schedule);
             } else {
                 this.displayNoTimetableMessage();
             }
@@ -30,45 +30,42 @@ class Timetable {
         .catch(error => console.error('Error:', error));
     }
 
-    renderTimetable(timetable) {
+    renderTimetable(schedule) {
         this.tableBody.innerHTML = ''; // 초기화
         const timeSlots = Array.from({ length: 30 }, (_, i) => {
             const hours = 7 + Math.floor(i / 2); // 07:00부터 시작
             const minutes = i % 2 === 0 ? '00' : '30';
             return `${hours}:${minutes}`;
         });
-    
+
         timeSlots.forEach((slot, index) => {
             const row = document.createElement('tr');
             const timeCell = document.createElement('td');
             timeCell.textContent = slot;
             row.appendChild(timeCell);
-    
+
             for (let day = 1; day <= 5; day++) {
                 const cell = document.createElement('td');
-    
+
                 // 해당 시간과 요일에 맞는 시간표 항목 검색
-                const entries = timetable.filter(entry => {
-                    const [startTime, endTime] = entry.time.split('-');
-                    const startIndex = timeSlots.indexOf(startTime);
-                    const endIndex = timeSlots.indexOf(endTime);
+                const entries = schedule.filter(entry => {
+                    const startIndex = timeSlots.indexOf(entry.start_time);
+                    const endIndex = timeSlots.indexOf(entry.end_time);
                     return day === entry.day && index >= startIndex && index < endIndex;
                 });
-    
+
                 if (entries.length > 0) {
                     const entry = entries[0];
                     cell.textContent = `${entry.class_name} (${entry.location})`;
                     cell.style.backgroundColor = '#d3d3d3'; // 블록 배경색
-                    cell.rowSpan = 1; // 추가 구현 가능
                 }
-    
+
                 row.appendChild(cell);
             }
-    
+
             this.tableBody.appendChild(row);
         });
     }
-    
 
     displayNoTimetableMessage() {
         // 기존 콘텐츠 초기화
